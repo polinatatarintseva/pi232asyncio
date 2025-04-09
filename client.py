@@ -1,23 +1,55 @@
 import asyncio
+ 
 
+ 
 
-HOST = 'localhost'
-PORT = 9095
+HOST = 'localhost'  # Хост для подключения
+ 
 
+PORT = 9095         # Порт для подключения
+async def tcp_echo_client(message):
+ 
 
-async def tcp_echo_client(host, port):
-    reader, writer = await asyncio.open_connection(host, port)
-    message = 'Hello, world'
+    """
+ 
 
-    writer.write(message.encode())
-    await writer.drain()
+    Асинхронная функция для подключения к серверу и обмена сообщениями.
+ 
 
-    data = await reader.read(100)
-    writer.close()
-    # await writer.wait_closed()
+    """
+ 
 
-# asyncio.run(tcp_echo_client(HOST, PORT))
+    # Устанавливаем соединение с сервером
+ 
 
-loop = asyncio.get_event_loop()
-task = loop.create_task(tcp_echo_client(HOST, PORT))
-loop.run_until_complete(task)
+    reader, writer = await asyncio.open_connection(HOST, PORT)
+ 
+
+ 
+
+    print(f'Отправка: {message!r}')
+ 
+
+    writer.write(message.encode())  # Кодируем сообщение в байты и отправляем серверу
+ 
+
+    await writer.drain()            # Ждем, пока данные будут отправлены
+# Читаем ответ от сервера (до 100 байт)
+   print(f'Получено: {data.decode()!r}')  # Декодируем данные и выводим
+   print('Закрытие соединения')
+ 
+
+    writer.close()                # Закрываем соединение
+ 
+
+    await writer.wait_closed()    # Ждем, пока соединение будет полностью закрыто
+if __name__ == '__main__':
+ 
+
+    message = 'Привет, мир!'     # Сообщение для отправки
+ 
+
+    # Запускаем асинхронную функцию tcp_echo_client с помощью asyncio.run()
+ 
+
+    asyncio.run(tcp_echo_client(message))
